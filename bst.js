@@ -18,14 +18,16 @@ class BST {
     }
 
     search(target) {
-        return this.#search(target, this.root);
-    }
-    #search(target, curNode) {
         if (this.#isEmpty()) {
             return null;
         }
         else {
-            // if current node equal to target then return it
+            return this.#search(target, this.root);
+        }
+    }
+    #search(target, curNode) {
+        // if current node equal to target then return it
+        if (curNode !== null && curNode !== undefined) {
             if (curNode.value === target) {
                 return curNode;
             }
@@ -38,36 +40,42 @@ class BST {
                 return this.#search(target, curNode.right);
             }
         }
+        else {
+            return null;
+        }
     }
 
-    inOrder(curNode) {
+    inOrder() {
+        this.#inOrder(this.root);
+    }
+    #inOrder(curNode) {
         if (curNode !== null) {
-            this.preOrder(curNode.left);
+            this.#inOrder(curNode.left);
             console.log(curNode.value);
-            this.preOrder(curNode.right);
+            this.#inOrder(curNode.right);
         }
     }
 
     insert(value) {
-        curNode = this.root;
-        preNode = null;
+        let curNode = this.root;
+        let preNode = null;
 
         while (curNode !== null) {
             preNode = curNode;
             // if current node greater than node to be inserted, then go to
             // left subtree
-            if (curNode > value) {
+            if (curNode.value > value) {
                 curNode = curNode.left;
             }
             // if current node less than or equal to node to be inserted, then go
             // to right subtree
-            else if (curNode <= value) {
+            else if (curNode.value <= value) {
                 curNode = curNode.right;
             }
         }
 
         // Create a new node
-        newNode = new BSTNode(value);
+        let newNode = new BSTNode(value);
 
         // If tree is empty then insert at the root
         if (this.#isEmpty()) {
@@ -86,46 +94,66 @@ class BST {
     }
 
     delete(value) {
-        let target = this.#search(value);
+        let target = this.#search(value, this.root);
         if (target === null) {
             return;
         }
 
-        // if node found is the root
-
         if (this.#hasTwoChildren(target)) {
-            let curNode = target.left;
-            let preNode = null;
+            let tmpNode = target.left;
 
             // find the rightmost leaf
-            while (curNode.right !== null) {
-                preNode = curNode;
-                curNode = curNode.right;
+            while (tmpNode.right !== null) {
+                tmpNode = tmpNode.right;
             }
 
-            // if it has a left child then let it take it's place
-            if (curNode.left !== null) {
-                preNode.right = curNode.left;
-            }
-            else {
-                preNode.right = null;
-            }
-
-            curNode.left = target.left;
-            curNode.right = target.right;
-            if (!this.#isRoot(target)) {
-                let parentNode = this.#getParentNode(target);
-
-                if (parentNode.left === target) {
-                    parentNode.left = curNode;
+            // if the rightmost child has a left child, then let that left child
+            // take it's place
+            let parentNode = this.#getParentNode(tmpNode);
+            if (tmpNode.left !== null) {
+                if (parentNode.right === tmpNode) {
+                    parentNode.right = tmpNode.left;
                 }
                 else {
-                    parentNode.right = curNode;
+                    parentNode.left = tmpNode.left;
                 }
+            }
+            // Otherwise let parentNode not reference the rightmost child anymore
+            else {
+                if (parentNode.right === tmpNode) {
+                    parentNode.right = null;
+                }
+                else {
+                    parentNode.left = null;
+                }
+            }
+
+            // Replace rightmost child with the target
+            tmpNode.right = target.right;
+            tmpNode.left = target.left;
+            target.right = null;
+            target.left = null;
+
+            // if target has a parentNode, let it reference the rightmost child
+            // instead of the target
+            parentNode = this.#getParentNode(target);
+            if (parentNode !== null) {
+                if (parentNode.right === target) {
+                    parentNode.right = tmpNode;
+                }
+                else {
+                    parentNode.left = tmpNode;
+                }
+            }
+
+            // If target is the root then let root reference the rightmost child
+            if (this.#isRoot(target)) {
+                this.root = tmpNode;
             }
         }
         else if ((this.#isRoot(target)) && (this.#hasOneChild(target))) {
-            this.root = this.#getOneChild(this.root);
+            let child = this.#getOneChild(this.root);
+            this.root = child;
         }
         else if ((this.#isRoot(target)) && (this.#hasNoChildren(target))) {
             this.root = null;
@@ -169,14 +197,14 @@ class BST {
         let curNode = this.root;
         let preNode = null;
 
-        while (curNode !== null) {
+        while (curNode !== node) {
             preNode = curNode;
             // if current node greater that target then go to left subtree
-            if (curNode > target) {
+            if (curNode.value > node.value) {
                 curNode = curNode.left;
             }
             // if current node less than or equal to target then go to right subtree
-            else if (curNode <= target) {
+            else if (curNode.value <= node.value) {
                 curNode = curNode.right;
             }
         }
