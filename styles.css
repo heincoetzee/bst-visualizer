@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+/* Global Styles */
+html {
+  box-sizing: border-box;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+body {
+  font-family: "Lato", sans-serif;
+}
+
+/* Header Styles */
+
+/* Perform Algorithm Styles */
+
+
+/* Dropdown Styles */
+
+
+/* Canvas Styles */
