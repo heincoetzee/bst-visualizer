@@ -6,6 +6,7 @@
   --light-green: #7BB661;
   --blue: #0066b2;
   --red: #ce2029;
+  --light-red: #cf352e;
   --black: #242526;
   --white: #fff;
 }
@@ -83,14 +84,22 @@ header {
 }
 
 /* Perform Algorithm Styles */
+.perform-algorithm {
+  display: inline-grid;
+}
 .perform-algorithm input {
   padding: 5px 10px;
   margin-right: 10px;
-  width: 60%;
+  width: 200px;
 }
 .perform-algorithm button {
   color: var(--white);
   background: var(--blue);
+}
+.perform-algorithm p {
+  margin: 2px 2px 0 0;
+  font-size: 13px;
+  color: var(--light-red);
 }
 
 /* Dropdown Styles */
@@ -138,3 +147,5 @@ header {
   color: var(--white);
   background: var(--red);
 }
+
+/* Canvas Styles */

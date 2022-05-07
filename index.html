@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://kit.fontawesome.com/d1e4ce82e3.js" crossorigin="anonymous"></script>
     <script defer src="javascript/dropdown.js"></script>
+    <script type="module" defer src="javascript/bst-visualize.js"></script>
     <!-- <script defer src="javascriopt/bst.js"></script> -->
   </head>
   <body>
@@ -20,8 +21,11 @@
       </div>
 
       <div class="perform-algorithm">
-        <input type="text" placeholder="value">
-        <button>Search</button>
+        <div>
+          <input type="text" placeholder="number">
+          <button>Insert</button>
+        </div>
+          <p class="error-message"></p>
       </div>
 
       <div class="dropdown-container">
@@ -58,7 +62,7 @@
     </header>
 
     <main>
-      <canvas id="canvas"></canvas>
+      <canvas id="canvas" width="500" height="500"></canvas>
     </main>
   </body>
 </html>

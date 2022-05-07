@@ -1,5 +1,9 @@
+"use strict";
+
 const [selectAlgorithmToggle, changeSpeedToggle] = Array.from(document.querySelectorAll(".dropdown-toggle"));
 const [selectAlgorithmMenu, changeSpeedMenu] = Array.from(document.querySelectorAll(".dropdown-menu"));
+const performAlgorithmButton = document.querySelector(".perform-algorithm button");
+const errorMessage = document.querySelector(".error-message");
 
 selectAlgorithmToggle.addEventListener("click", event => {
     selectAlgorithmMenu.classList.toggle("not-visible");
@@ -20,4 +24,9 @@ window.addEventListener("click", () => {
     if (!changeSpeedMenu.classList.contains("not-visible")) {
         changeSpeedMenu.classList.add("not-visible");
     }
+});
+
+selectAlgorithmMenu.addEventListener("click", event => {
+    performAlgorithmButton.textContent = event.target.textContent;
+    errorMessage.textContent = "";
 });
