@@ -21,30 +21,52 @@ ctx.strokeStyle = "black";
 const bst = new BST(canvas, ctx);
 
 const performAlgorithm = () => {
-    // To insert a node
-    let algorithmButtonValue = performAlgorithmButton.textContent;
-    if (algorithmButtonValue === "Insert") {
-        const numberRegExp = /^\d{1,3}$/;
-        let value = algorithmValue.value.trim(" ");
+    const numberRegExp = /^\d{1,3}$/;
+    let value = algorithmValue.value.trim(" ");
 
-        if (numberRegExp.exec(value) === null) {
-            errorMessage.textContent = "Please enter a number (1 - 999)";
-            algorithmValue.value = "";
-            algorithmValue.focus();
-        }
-        else {
-            errorMessage.textContent = "";
+    if (numberRegExp.exec(value) === null) {
+        errorMessage.textContent = "Please enter a number (1 - 999)";
+        algorithmValue.value = "";
+        algorithmValue.focus();
+    }
+    else {
+        errorMessage.textContent = "";
+        value = Number(value);
+        let algorithmButtonValue = performAlgorithmButton.textContent;
+
+        // Inserting a node
+        if (algorithmButtonValue === "Insert") {
+            ctx.strokeStyle = "black";
             bst.insert(value);
-            algorithmValue.value = "";
-            algorithmValue.focus();
-            console.log(bst.values);
         }
-    }
-    else if (algorithmButtonValue === "Search") {
-        console.log("Search for node");
-    }
-    else if (algorithmButtonValue === "Delete") {
-        console.log("Delete node");
+
+        // Searching for a node
+        else if (algorithmButtonValue === "Search") {
+            ctx.textAlign = "left";
+            ctx.font = "16px Lato";
+            ctx.clearRect(10, 10, 300, 30);
+            
+            let object = bst.search(value);
+            if ((bst.root !== null) && object === null) {
+                ctx.fillText(`${value} was not found`, 20, 20);
+            }
+            else {
+                ctx.fillText(`${bst.search(value).value} was found`, 20, 20);
+            }
+            ctx.stroke();
+
+            ctx.font = "18px Lato";
+            ctx.textAlign = "center";
+        }
+
+        // Deleting a node
+        else if (algorithmButtonValue === "Delete") {
+            console.log("Delete node");
+            bst.delete(value);
+        }
+
+        algorithmValue.value = "";
+        algorithmValue.focus();
     }
 };
 
@@ -56,4 +78,10 @@ algorithmValue.addEventListener("keydown", event => {
     if (event.key === "Enter") {
         performAlgorithm();
     }
+});
+
+clearBoardButton.addEventListener("click", () => {
+    bst.deleteAll();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    console.log(bst.root);
 });

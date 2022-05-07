@@ -40,6 +40,14 @@ export default class BST {
 
     search(target) {
         if (this.#isEmpty()) {
+            this.ctx.textAlign = "left";
+            this.ctx.font = "16px Lato";
+            this.ctx.clearRect(10, 10, 300, 30);
+            this.ctx.fillText(`${target} was not found. Tree is empty`, 20, 20);
+            this.ctx.stroke();
+
+            this.ctx.font = "18px Lato";
+            this.ctx.textAlign = "center";
             return null;
         }
         else {
@@ -50,15 +58,21 @@ export default class BST {
         // if current node equal to target then return it
         if (curNode !== null && curNode !== undefined) {
             if (curNode.value === target) {
+                this.#drawOutline(curNode, "green");
+
                 return curNode;
             }
             // if current node greater than target then go to left subtree
             else if (curNode.value > target) {
-                return this.#search(target, curNode.left);
+                this.#drawOutline(curNode, "red");
+
+                return this.#search(target, curNode.leftNode);
             }
             // if current node smaller than target then go to right subtree
             else if (curNode.value < target) {
-                return this.#search(target, curNode.right);
+                this.#drawOutline(curNode, "red");
+
+                return this.#search(target, curNode.rightNode);
             }
         }
         else {
@@ -70,7 +84,7 @@ export default class BST {
         this.#inOrder(this.root);
     }
     #inOrder(curNode) {
-        if (curNode !== null) {
+        if (curNode !== null && curNode !== undefined) {
             this.#inOrder(curNode.leftNode);
             console.log(curNode);
             this.#inOrder(curNode.rightNode);
@@ -78,7 +92,6 @@ export default class BST {
     }
 
     insert(value) {
-        value = Number(value);
         this.values.push(value);
 
         let curNode = this.root;
@@ -165,13 +178,18 @@ export default class BST {
     }
 
     deleteAll() {
-        for (let element of this.values) {
+        this.values.reverse();
+
+        let element;
+        while (element = this.values.pop()) {
+            console.log(element);
+            this.inOrder();
             this.delete(element);
         }
     }
 
     delete(value) {
-        let target = this.#search(value, this.root);
+        let target = this.search(value);
         if (target === null) {
             return;
         }
@@ -180,19 +198,19 @@ export default class BST {
             let tmpNode = target.leftNode;
 
             // find the rightmost leaf
-            while (tmpNode.rightNode !== null) {
+            while (tmpNode.rightNode !== null && tmpNode.rightNode !== undefined) {
                 tmpNode = tmpNode.rightNode;
             }
 
             // if the rightmost child has a leftNode child, then let that leftBranch child
             // take it's place
             let parentNode = this.#getParentNode(tmpNode);
-            if (tmpNode.leftNode !== null) {
+            if (tmpNode.leftNode !== null && tmpNode.leftNode !== undefined) {
                 if (parentNode.rightNode === tmpNode) {
                     parentNode.rightNode = tmpNode.leftNode;
                 }
                 else {
-                    parentNode.leftNode = tmpNode.leftBranch;
+                    parentNode.leftNode = tmpNode.leftNode;
                 }
             }
             // Otherwise let parentNode not reference the rightmost child anymore
@@ -274,7 +292,7 @@ export default class BST {
         let curNode = this.root;
         let preNode = null;
 
-        while (curNode !== node) {
+        while (curNode !== null && curNode !== undefined) {
             preNode = curNode;
             // if current node greater that target then go to leftNode subtree
             if (curNode.value > node.value) {
@@ -353,6 +371,12 @@ export default class BST {
         // ____\|
         this.ctx.moveTo(branch.endX, branch.endY);
         this.ctx.lineTo(branch.endX, branch.endY - arrowLength);
+        this.ctx.stroke();
+    }
+    #drawOutline(curNode, color) {
+        this.ctx.strokeStyle = color;
+        this.ctx.beginPath();
+        this.ctx.arc(curNode.x, curNode.y, radius + (radius / 4), 0, Math.PI * 2);
         this.ctx.stroke();
     }
 }
