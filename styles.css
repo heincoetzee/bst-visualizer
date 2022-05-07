@@ -1,22 +1,140 @@
-@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
 
 /* Global Styles */
+:root {
+  --green: #4f7942;
+  --light-green: #7BB661;
+  --blue: #0066b2;
+  --red: #ce2029;
+  --black: #242526;
+  --white: #fff;
+}
 html {
   box-sizing: border-box;
+  height: 100%;
 }
 *, *::before, *::after {
   box-sizing: border-box;
 }
 body {
-  font-family: "Lato", sans-serif;
+  font: 400 18px Lato, sans-serif;
+  display: grid;
+  grid-template-rows: 1fr 8fr;
+  grid-template-areas: "header" "main";
+  row-gap: 20px;
+  height: 100%;
+  margin: 0;
+}
+main {
+  grid-area: main;
+}
+h1, p {
+  margin: 0;
+}
+h1 {
+  font-weight: 700;
+  font-size: 22px;
+}
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+button, input {
+  font-size: 14px;
+}
+button {
+  border: none;
+  border-radius: 5px;
+  padding: 7px 14px;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+button:hover {
+  opacity: 1;
+}
+input {
+  outline: none;
+  border: none;
+  border-radius: 2px;
 }
 
 /* Header Styles */
+header {
+  grid-area: header;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 15px 20px 10px;
+  color: var(--white);
+  background: var(--black);
+}
+
+/* Page Info Styles */
+.page-info h1 {
+  display: inline-block;
+  margin-left: 10px;
+}
+.page-info span {
+  font-size: 20px;
+  color: var(--green);
+}
 
 /* Perform Algorithm Styles */
-
+.perform-algorithm input {
+  padding: 5px 10px;
+  margin-right: 10px;
+  width: 60%;
+}
+.perform-algorithm button {
+  color: var(--white);
+  background: var(--blue);
+}
 
 /* Dropdown Styles */
+.dropdown {
+  display: inline-block;
+  cursor: pointer;
+  position: relative;
+  top: 0;
+}
+.dropdown:first-child {
+  margin-right: 20px;
+}
+.dropdown-toggle {
+  transition: color 0.2s;
+}
+.dropdown-toggle:hover {
+  color: var(--light-green);
+}
+.dropdown-toggle span, .dropdown-toggle p{
+  display: inline-block;
+}
+.dropdown-menu {
+  position: absolute;
+  background: var(--black);
+  display: block;
+  top: 60px;
+  width: 100%;
+  padding: 5px 0;
+  border: none;
+  border-radius: 5px;
+}
+.dropdown-menu.not-visible {
+  display: none;
+}
+.dropdown-menu li {
+  padding: 10px 15px;
+  transition: background-color 0.2s;
+}
+.dropdown-menu li:hover {
+  background-color: var(--light-green);
+}
 
-
-/* Canvas Styles */
+/* Clear Board button Styles */
+.clear {
+  color: var(--white);
+  background: var(--red);
+}

@@ -8,47 +8,53 @@
     insertion, deletion and balancing of a Binary Search Tree">
     <link rel="stylesheet" href="styles.css">
     <script src="https://kit.fontawesome.com/d1e4ce82e3.js" crossorigin="anonymous"></script>
-    <!-- <script defer src="bst.js"></script> -->
+    <script defer src="javascript/dropdown.js"></script>
+    <!-- <script defer src="javascriopt/bst.js"></script> -->
   </head>
   <body>
     <header>
-      <!-- Page Icon-->
-      <span class="fa-solid fa-tree"></span>
+      <div class="page-info">
+        <!-- Page Icon-->
+        <span class="fa-solid fa-tree"></span>
+        <h1>Binary Search Tree Visualizer</h1>
+      </div>
 
       <div class="perform-algorithm">
-        <input type="text">
+        <input type="text" placeholder="value">
         <button>Search</button>
       </div>
 
-      <!-- Select Algorithm Dropdown -->
-      <div class="dropdown">
-        <div class="dropdown-toggle">
-          <p>Select Algorithm</p>
-          <span class="fa-solid fa-caret-down"></span>
+      <div class="dropdown-container">
+        <!-- Select Algorithm Dropdown -->
+        <div class="dropdown">
+          <div class="dropdown-toggle">
+            <p>Select Algorithm</p>
+            <span class="fa-solid fa-caret-down"></span>
+          </div>
+
+          <ul class="dropdown-menu not-visible">
+            <li>Search</li>
+            <li>Insert</li>
+            <li>Delete</li>
+          </ul>
         </div>
 
-        <ul class="dropdown-menu">
-          <li>Search</li>
-          <li>Insert</li>
-          <li>Delete</li>
-        </ul>
-      </div>
+        <!-- Change Speed Dropdown -->
+        <div class="dropdown">
+          <div class="dropdown-toggle">
+            <p>Change Speed</p>
+            <span class="fa-solid fa-caret-down"></span>
+          </div>
 
-      <!-- Change Speed Dropdown -->
-      <div class="dropdown">
-        <div class="dropdown-toggle">
-          <p>Change Speed</p>
-          <span class="fa-solid fa-caret-down"></span>
+          <ul class="dropdown-menu not-visible">
+            <li>Slow</li>
+            <li>Average</li>
+            <li>Fast</li>
+          </ul>
         </div>
-
-        <ul class="dropdown-menu">
-          <li>Slow</li>
-          <li>Average</li>
-          <li>Fast</li>
-        </ul>
       </div>
 
-      <button>Clear Board</button>
+      <button class="clear">Clear Board</button>
     </header>
 
     <main>
