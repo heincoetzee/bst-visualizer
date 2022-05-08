@@ -72,7 +72,6 @@ export default class BST {
             return null;
         }
     }
-
     inOrder(visit) {
         this.#inOrder(this.root, visit);
     }
@@ -171,6 +170,7 @@ export default class BST {
             this.displayText(`${value} was inserted`);
         }
 
+        this.#checkcollision(newNode);
     }
 
     deleteAll() {
@@ -512,5 +512,87 @@ export default class BST {
                 curNode.rightBranch.endY = curNode.y + spaceBetweenNodes - twoThirdsOfRadius;
             }
         });
+    }
+    #checkcollision(newNode) {
+        // check if the inserted node collides with any existing node
+        let curNode = this.root;
+
+        while (curNode !== null && curNode !== undefined) {
+            let equals = curNode === newNode;
+            if ((curNode.x === newNode.x) && (curNode.y === newNode.y) && !equals) {
+                break;
+            }
+            else if (curNode.x === newNode.x) {
+                let parentNode = this.#getParentNode(newNode);
+
+                if (parentNode === null) {
+                    curNode = null;
+                    break;
+                }
+
+                if (parentNode.rightNode === newNode) {
+                    curNode = curNode.rightNode;
+                }
+                else {
+                    curNode = curNode.leftNode;
+                }
+            }
+            else if (curNode.y < newNode.y) {
+                if (curNode.x > newNode.x) {
+                    curNode = curNode.leftNode;
+                }
+                else {
+                    curNode = curNode.rightNode;
+                }
+            }
+            else {
+                curNode = null;
+                break;
+            }
+        }
+        
+        // There there is a collision, fix it and repaint the canvas
+        if (curNode) {
+            let p1 = this.#getParentNode(curNode);
+            let p2 = this.#getParentNode(newNode);
+
+            // move current node out of collision
+            const doubleRadius = (radius * 2);
+            if (p1.rightNode === curNode) {
+                curNode.x -= doubleRadius;
+                p1.rightBranch.startX = p1.x + (radius / 3);
+                p1.rightBranch.startY = p1.y + radius;
+
+                p1.rightBranch.endX = curNode.x;
+                p1.rightBranch.endY = curNode.y - radius;
+            }
+            else if (p1.leftNode === curNode) {
+                curNode.x += doubleRadius;
+                p1.leftBranch.startX = p1.x - (radius / 3);
+                p1.leftBranch.startY = p1.y + radius;
+
+                p1.leftBranch.endX = curNode.x;
+                p1.leftBranch.endY = curNode.y - radius;
+            }
+
+            if (p2.rightNode === newNode) {
+                newNode.x -= doubleRadius;
+                p2.rightBranch.startX = p2.x + (radius / 3);
+                p2.rightBranch.startY = p2.y + radius;
+
+                p2.rightBranch.endX = newNode.x;
+                p2.rightBranch.endY = newNode.y - radius;
+            }
+            else if (p2.leftNode === newNode) {
+                newNode.x += doubleRadius;
+                p2.leftBranch.startX = p2.x - (radius / 3);
+                p2.leftBranch.startY = p2.y + radius;
+
+                p2.leftBranch.endX = newNode.x;
+                p2.leftBranch.endY = newNode.y - radius;
+            }
+
+            this.repaint();
+        }
     }
 }

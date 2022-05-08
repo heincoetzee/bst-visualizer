@@ -49,11 +49,9 @@ button {
   border-radius: 5px;
   padding: 7px 14px;
   cursor: pointer;
-  opacity: 0.8;
-  transition: opacity 0.2s;
 }
 button:hover {
-  opacity: 1;
+  opacity: 0.8;
 }
 input {
   outline: none;
