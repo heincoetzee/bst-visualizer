@@ -42,18 +42,13 @@ const performAlgorithm = () => {
 
         // Searching for a node
         else if (algorithmButtonValue === "Search") {
-            ctx.textAlign = "left";
-            ctx.font = "16px Lato";
-            ctx.clearRect(10, 10, 300, 30);
-            
             let object = bst.search(value);
             if ((bst.root !== null) && object === null) {
-                ctx.fillText(`${value} was not found`, 20, 20);
+                bst.displayText(`${value} was not found`);
             }
-            else {
-                ctx.fillText(`${bst.search(value).value} was found`, 20, 20);
+            else if (object !== null) {
+                bst.displayText(`${object.value} was found`);
             }
-            ctx.stroke();
 
             ctx.font = "18px Lato";
             ctx.textAlign = "center";
@@ -61,8 +56,16 @@ const performAlgorithm = () => {
 
         // Deleting a node
         else if (algorithmButtonValue === "Delete") {
-            console.log("Delete node");
-            bst.delete(value);
+            let flag = bst.delete(value);
+            bst.repaint();
+
+
+            if (flag) {
+                bst.displayText(`${value} was deleted`);
+            }
+            else {
+                bst.displayText(`${value} does not exits in the tree`);
+            }
         }
 
         algorithmValue.value = "";
@@ -82,6 +85,4 @@ algorithmValue.addEventListener("keydown", event => {
 
 clearBoardButton.addEventListener("click", () => {
     bst.deleteAll();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    console.log(bst.root);
 });

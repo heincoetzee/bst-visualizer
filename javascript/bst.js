@@ -40,14 +40,7 @@ export default class BST {
 
     search(target) {
         if (this.#isEmpty()) {
-            this.ctx.textAlign = "left";
-            this.ctx.font = "16px Lato";
-            this.ctx.clearRect(10, 10, 300, 30);
-            this.ctx.fillText(`${target} was not found. Tree is empty`, 20, 20);
-            this.ctx.stroke();
-
-            this.ctx.font = "18px Lato";
-            this.ctx.textAlign = "center";
+            this.displayText(`${target} was not found. Tree is empty`);
             return null;
         }
         else {
@@ -80,14 +73,14 @@ export default class BST {
         }
     }
 
-    inOrder() {
-        this.#inOrder(this.root);
+    inOrder(visit) {
+        this.#inOrder(this.root, visit);
     }
-    #inOrder(curNode) {
+    #inOrder(curNode, visit) {
         if (curNode !== null && curNode !== undefined) {
-            this.#inOrder(curNode.leftNode);
-            console.log(curNode);
-            this.#inOrder(curNode.rightNode);
+            this.#inOrder(curNode.leftNode, visit);
+            visit(curNode);
+            this.#inOrder(curNode.rightNode, visit);
         }
     }
 
@@ -122,6 +115,7 @@ export default class BST {
             newNode.y = originY;
 
             this.#drawNode(newNode);
+            this.displayText(`${value} was inserted`);
         }
         // Otherwise if parent node greater than new node then insert into left subtree
         else if (preNode.value > newNode.value) {
@@ -147,6 +141,7 @@ export default class BST {
 
             // lastly insert the node
             preNode.leftNode = newNode;
+            this.displayText(`${value} was inserted`);
         }
         // Otherwise if parent node smaller than or equals to new node then insert
         // in to right subtree
@@ -173,6 +168,7 @@ export default class BST {
 
             // lastly insert the node
             preNode.rightNode = newNode;
+            this.displayText(`${value} was inserted`);
         }
 
     }
@@ -182,16 +178,15 @@ export default class BST {
 
         let element;
         while (element = this.values.pop()) {
-            console.log(element);
-            this.inOrder();
             this.delete(element);
         }
+        this.ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     delete(value) {
         let target = this.search(value);
         if (target === null) {
-            return;
+            return false;
         }
 
         if (this.#hasTwoChildren(target)) {
@@ -208,26 +203,38 @@ export default class BST {
             if (tmpNode.leftNode !== null && tmpNode.leftNode !== undefined) {
                 if (parentNode.rightNode === tmpNode) {
                     parentNode.rightNode = tmpNode.leftNode;
+                    tmpNode.rightBranch = null;
                 }
                 else {
                     parentNode.leftNode = tmpNode.leftNode;
+                    tmpNode.leftBranch = null;
                 }
+                this.#updateValues(tmpNode.leftNode);
             }
             // Otherwise let parentNode not reference the rightmost child anymore
             else {
                 if (parentNode.rightNode === tmpNode) {
                     parentNode.rightNode = null;
+                    parentNode.rightBranch = null
                 }
                 else {
                     parentNode.leftNode = null;
+                    parentNode.leftBranch = null
                 }
             }
 
             // Replace rightmost child with the target
             tmpNode.rightNode = target.rightNode;
+            tmpNode.rightBranch = target.rightBranch;
+
             tmpNode.leftNode = target.leftNode;
+            tmpNode.leftBranch = target.leftBranch
+
             target.rightNode = null;
+            target.rightBranch = null;
+
             target.leftNode = null;
+            target.rightBranch = null
 
             // if target has a parentNode, let it reference the rightmost child
             // instead of the target
@@ -239,16 +246,33 @@ export default class BST {
                 else {
                     parentNode.leftNode = tmpNode;
                 }
+                this.#updateValues(tmpNode);
             }
 
             // If target is the root then let root reference the rightmost child
             if (this.#isRoot(target)) {
+                tmpNode.x = this.root.x;
+                tmpNode.y = this.root.y;
+
                 this.root = tmpNode;
             }
         }
         else if ((this.#isRoot(target)) && (this.#hasOneChild(target))) {
-            let child = this.#getOneChild(this.root);
-            this.root = child;
+            let childNode = this.#getOneChild(this.root);
+
+            if (this.root.leftNode === childNode) {
+                this.root.leftNode = null;
+                this.root.leftBranch = null;
+            }
+            else {
+                this.root.rightNode = null;
+                this.root.rightBranch = null;
+            }
+
+            // Then recursively update x and y of coordinates of each node 
+            // and it's connected branches, starting at the child node
+            this.#updateValues(childNode);
+            this.root = childNode;
         }
         else if ((this.#isRoot(target)) && (this.#hasNoChildren(target))) {
             this.root = null;
@@ -257,12 +281,21 @@ export default class BST {
             // need to find it's parent and let it reference it's child
             let parentNode = this.#getParentNode(target);
 
+            let childNode = this.#getOneChild(target);
             if (parentNode.leftNode === target) {
-                parentNode.leftNode = this.#getOneChild(target);
+                parentNode.leftNode = childNode;
+                target.leftBranch = null;
+
             }
             else {
-                parentNode.rightNode = this.#getOneChild(target);
+                parentNode.rightNode = childNode;
+                target.rightBranch = null;
             }
+
+            // Then recursively update x and y of coordinates of each node 
+            // and it's connected branches, starting at the child node
+            this.#updateValues(childNode);
+
         }
         else if (this.#hasNoChildren(target)) {
             // need to find it's parent and let it reference nothing
@@ -270,17 +303,21 @@ export default class BST {
 
             if (parentNode.leftNode === target) {
                 parentNode.leftNode = null;
+                parentNode.leftBranch = null;
             }
             else {
                 parentNode.rightNode = null;
+                parentNode.rightBranch = null;
             }
         }
+
+        return true;
     }
     #hasNoChildren(node) {
         return (node.leftNode === null) && (node.rightNode === null);
     }
     #hasOneChild(node) {
-        return (node.leftNode !== null) || (node.rightBranch !== null);
+        return (node.leftNode !== null) || (node.rightNode !== null);
     }
     #hasTwoChildren(node) {
         return (node.leftNode !== null) && (node.rightNode !== null);
@@ -292,7 +329,7 @@ export default class BST {
         let curNode = this.root;
         let preNode = null;
 
-        while (curNode !== null && curNode !== undefined) {
+        while (curNode !== node) {
             preNode = curNode;
             // if current node greater that target then go to leftNode subtree
             if (curNode.value > node.value) {
@@ -378,5 +415,67 @@ export default class BST {
         this.ctx.beginPath();
         this.ctx.arc(curNode.x, curNode.y, radius + (radius / 4), 0, Math.PI * 2);
         this.ctx.stroke();
+    }
+    displayText(message) {
+        this.ctx.textAlign = "left";
+        this.ctx.font = "16px Lato";
+        this.ctx.clearRect(10, 10, 300, 30);
+        this.ctx.fillText(message, 20, 20);
+
+        this.ctx.font = "18px Lato";
+        this.ctx.textAlign = "center";
+    }
+    repaint() {
+        this.ctx.strokeStyle = "black";
+        this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+        this.inOrder((curNode) => {
+            // Redraw node and possible it's branches if any
+            this.#drawNode(curNode);
+            if (curNode.leftBranch !== null) {
+                this.#drawLeftBranch(curNode.leftBranch);
+            }
+            if (curNode.rightBranch !== null) {
+                this.#drawRightBranch(curNode.rightBranch);
+            }
+        });
+    }
+    #updateValues(node) {
+        this.#inOrder(node, (curNode) => {
+            const thirdOfRadius = (radius / 3);
+            const twoThirdsOfRadius = (thirdOfRadius * 2);
+            const spaceBetweenNodes = radius * 3;
+
+            // Update the node's x and y coordinate
+            let parentNode = this.#getParentNode(curNode);
+            if (parentNode.leftNode === curNode) {
+                curNode.x = curNode.x + spaceBetweenNodes;
+                curNode.y = curNode.y - spaceBetweenNodes;
+            }
+            else {
+                curNode.x = curNode.x - spaceBetweenNodes;
+                curNode.y = curNode.y - spaceBetweenNodes;
+            }
+
+            // if node has a left branch then update it's x and y coordinates
+            if (curNode.leftNode !== null && curNode.leftNode !== undefined) {
+                // Update start coordinates
+                curNode.leftBranch.startX = curNode.x -  twoThirdsOfRadius;
+                curNode.leftBranch.startY = (curNode.y + radius) - thirdOfRadius; 
+
+                // 
+                curNode.leftBranch.endX = curNode.x - spaceBetweenNodes + twoThirdsOfRadius;
+                curNode.leftBranch.endY = curNode.y + spaceBetweenNodes - twoThirdsOfRadius;
+            }
+
+
+            // if node has right branch then update it's x and y coordinates
+            if (curNode.rightNode !== null && curNode.rightNode !== undefined) {
+                curNode.rightBranch.startX = curNode.x + twoThirdsOfRadius;
+                curNode.rightBranch.startY = (curNode.y + radius) - thirdOfRadius; 
+
+                curNode.rightBranch.endX = curNode.x + spaceBetweenNodes - twoThirdsOfRadius;
+                curNode.rightBranch.endY = curNode.y + spaceBetweenNodes - twoThirdsOfRadius;
+            }
+        });
     }
 }
