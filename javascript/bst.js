@@ -174,12 +174,10 @@ export default class BST {
     }
 
     deleteAll() {
-        this.values.reverse();
-
-        let element;
-        while (element = this.values.pop()) {
+        for (let element of this.values) {
             this.delete(element);
         }
+        this.values = [];
         this.ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
@@ -260,6 +258,7 @@ export default class BST {
         else if ((this.#isRoot(target)) && (this.#hasOneChild(target))) {
             let childNode = this.#getOneChild(this.root);
 
+            this.#updateValues(childNode);
             if (this.root.leftNode === childNode) {
                 this.root.leftNode = null;
                 this.root.leftBranch = null;
@@ -268,11 +267,8 @@ export default class BST {
                 this.root.rightNode = null;
                 this.root.rightBranch = null;
             }
-
-            // Then recursively update x and y of coordinates of each node 
-            // and it's connected branches, starting at the child node
-            this.#updateValues(childNode);
             this.root = childNode;
+
         }
         else if ((this.#isRoot(target)) && (this.#hasNoChildren(target))) {
             this.root = null;
@@ -282,19 +278,18 @@ export default class BST {
             let parentNode = this.#getParentNode(target);
 
             let childNode = this.#getOneChild(target);
+            this.#updateValues(childNode);
             if (parentNode.leftNode === target) {
                 parentNode.leftNode = childNode;
-                target.leftBranch = null;
-
             }
             else {
                 parentNode.rightNode = childNode;
-                target.rightBranch = null;
             }
 
+            target.rightBranch = null;
+            target.leftBranch = null;
             // Then recursively update x and y of coordinates of each node 
             // and it's connected branches, starting at the child node
-            this.#updateValues(childNode);
 
         }
         else if (this.#hasNoChildren(target)) {
@@ -447,13 +442,53 @@ export default class BST {
 
             // Update the node's x and y coordinate
             let parentNode = this.#getParentNode(curNode);
-            if (parentNode.leftNode === curNode) {
-                curNode.x = curNode.x + spaceBetweenNodes;
-                curNode.y = curNode.y - spaceBetweenNodes;
+            let grandParentNode = this.#getParentNode(parentNode);
+
+            if (grandParentNode === null) {
+                if (parentNode.leftNode === curNode) {
+                    curNode.x = curNode.x + spaceBetweenNodes;
+                    curNode.y = curNode.y - spaceBetweenNodes;
+                }
+                else {
+                    curNode.x = curNode.x - spaceBetweenNodes;
+                    curNode.y = curNode.y - spaceBetweenNodes;
+                }
             }
             else {
-                curNode.x = curNode.x - spaceBetweenNodes;
-                curNode.y = curNode.y - spaceBetweenNodes;
+                const case1 = (grandParentNode.leftNode === parentNode) && (parentNode.leftNode === curNode)
+                    && (parentNode.leftNode === null);
+                const case4 = (grandParentNode.rightNode === parentNode) && (parentNode.leftNode === curNode)
+                    && (parentNode.rightNode === null);
+
+                const case2 = (grandParentNode.rightNode === parentNode) && (parentNode.rightNode === curNode)
+                    && (parentNode.leftNode === null);
+                const case3 = (grandParentNode.leftNode === parentNode) && (parentNode.rightNode === curNode)
+                    && (parentNode.leftNode === null);
+
+                // inverse of case 3
+                const case5 = (grandParentNode.leftNode === parentNode) && (parentNode.rightNode === curNode)
+                    && (parentNode.leftNode !== null);
+
+                // inverse of case 4
+                const case6 = (grandParentNode.rightNode === parentNode) && (parentNode.leftNode === curNode)
+                    && (parentNode.rightNode !== null);
+
+                // inverse of case 1
+                const case7 = (grandParentNode.leftNode === parentNode) && (parentNode.leftNode === curNode)
+                    && (parentNode.leftNode !== null);
+
+                // inverse of case 2
+                const case8 = (grandParentNode.rightNode === parentNode) && (parentNode.rightNode === curNode)
+                    && (parentNode.leftNode === null);
+
+                if (case1 || case4 || case5 || case7) {
+                    curNode.x = curNode.x + spaceBetweenNodes;
+                    curNode.y = curNode.y - spaceBetweenNodes;
+                }
+                else if (case2 || case3 || case6 || case8) {
+                    curNode.x = curNode.x - spaceBetweenNodes;
+                    curNode.y = curNode.y - spaceBetweenNodes;
+                }
             }
 
             // if node has a left branch then update it's x and y coordinates

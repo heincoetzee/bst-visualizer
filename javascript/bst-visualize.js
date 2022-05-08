@@ -37,11 +37,22 @@ const performAlgorithm = () => {
         // Inserting a node
         if (algorithmButtonValue === "Insert") {
             ctx.strokeStyle = "black";
-            bst.insert(value);
+            let object = bst.search(value);
+            bst.repaint();
+
+            if (object === null) {
+                bst.insert(value);
+            }
+            else {
+                errorMessage.textContent = "No duplicates allowed";
+                algorithmValue.value = "";
+                algorithmValue.focus();
+            }
         }
 
         // Searching for a node
         else if (algorithmButtonValue === "Search") {
+            bst.repaint();
             let object = bst.search(value);
             if ((bst.root !== null) && object === null) {
                 bst.displayText(`${value} was not found`);
