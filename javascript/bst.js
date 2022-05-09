@@ -88,6 +88,7 @@ export default class BST {
         let curNode = this.root;
         let preNode = null;
 
+        let path = 0;
         while (curNode !== null && curNode !== undefined) {
             preNode = curNode;
             // if current node greater than node to be inserted, then go to
@@ -100,7 +101,9 @@ export default class BST {
             else if (curNode.value <= value) {
                 curNode = curNode.rightNode;
             }
+            path++;
         }
+        let level = path + 1;
 
         // Create a new node
         let newNode = new BSTNode(value);
@@ -133,7 +136,7 @@ export default class BST {
             newNode.x = preNode.x - spaceBetweenNodes;
             newNode.y = preNode.y + spaceBetweenNodes;
 
-            if ((newNode.y + radius) <= this.canvas.height / 1.5) {
+            if (level <= 4) {
                 // Create the left branch and draw it
                 preNode.leftBranch = new Branch(branchStartX, branchStartY, branchEndX,
                     branchEndY, preNode);
@@ -167,7 +170,7 @@ export default class BST {
             newNode.x = preNode.x + spaceBetweenNodes;
             newNode.y = preNode.y + spaceBetweenNodes;
 
-            if ((newNode.y + radius) <= this.canvas.height / 1.5) {
+            if (level <= 4) {
                 // Create the right branch and draw it
                 preNode.rightBranch = new Branch(branchStartX, branchStartY, branchEndX,
                     branchEndY, preNode);
@@ -592,7 +595,6 @@ export default class BST {
                 curNode.x += doubleRadius;
                 p1.leftBranch.startX = p1.x - (radius / 3);
                 p1.leftBranch.startY = p1.y + radius;
-
                 p1.leftBranch.endX = curNode.x;
                 p1.leftBranch.endY = curNode.y - radius;
             }
