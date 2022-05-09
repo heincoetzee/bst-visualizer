@@ -84,7 +84,6 @@ export default class BST {
     }
 
     insert(value) {
-        this.values.push(value);
 
         let curNode = this.root;
         let preNode = null;
@@ -113,6 +112,7 @@ export default class BST {
             newNode.x = this.canvas.width / 2;
             newNode.y = originY;
 
+            this.values.push(value);
             this.#drawNode(newNode);
             this.displayText(`${value} was inserted`);
         }
@@ -128,19 +128,27 @@ export default class BST {
             let branchEndX = preNode.x - spaceBetweenNodes + twoThirdsOfRadius;
             let branchEndY = preNode.y + spaceBetweenNodes - twoThirdsOfRadius;
 
-            // Create the left branch and draw it
-            preNode.leftBranch = new Branch(branchStartX, branchStartY, branchEndX,
-                branchEndY, preNode);
-            this.#drawLeftBranch(preNode.leftBranch);
 
             // Get the x and y coordinates of the newNode and draw it
             newNode.x = preNode.x - spaceBetweenNodes;
             newNode.y = preNode.y + spaceBetweenNodes;
-            this.#drawNode(newNode);
 
-            // lastly insert the node
-            preNode.leftNode = newNode;
-            this.displayText(`${value} was inserted`);
+            if ((newNode.y + radius) <= this.canvas.height / 1.5) {
+                // Create the left branch and draw it
+                preNode.leftBranch = new Branch(branchStartX, branchStartY, branchEndX,
+                    branchEndY, preNode);
+                this.#drawLeftBranch(preNode.leftBranch);
+
+                this.#drawNode(newNode);
+
+                // lastly insert the node
+                preNode.leftNode = newNode;
+                this.displayText(`${value} was inserted`);
+                this.values.push(value);
+            }
+            else {
+                this.displayText("Can't Insert past level 4");
+            }
         }
         // Otherwise if parent node smaller than or equals to new node then insert
         // in to right subtree
@@ -155,22 +163,29 @@ export default class BST {
             let branchEndX = preNode.x + spaceBetweenNodes - twoThirdsOfRadius;
             let branchEndY = preNode.y + spaceBetweenNodes - twoThirdsOfRadius;
 
-            // Create the right branch and draw it
-            preNode.rightBranch = new Branch(branchStartX, branchStartY, branchEndX,
-                branchEndY, preNode);
-            this.#drawRightBranch(preNode.rightBranch);
-
             // Get the x and y coordinates of the newNode and draw it
             newNode.x = preNode.x + spaceBetweenNodes;
             newNode.y = preNode.y + spaceBetweenNodes;
-            this.#drawNode(newNode);
 
-            // lastly insert the node
-            preNode.rightNode = newNode;
-            this.displayText(`${value} was inserted`);
+            if ((newNode.y + radius) <= this.canvas.height / 1.5) {
+                // Create the right branch and draw it
+                preNode.rightBranch = new Branch(branchStartX, branchStartY, branchEndX,
+                    branchEndY, preNode);
+                this.#drawRightBranch(preNode.rightBranch);
+
+                this.#drawNode(newNode);
+
+                // lastly insert the node
+                preNode.rightNode = newNode;
+                this.displayText(`${value} was inserted`);
+                this.values.push(value);
+            }
+            else {
+                this.displayText("Can't Insert past level 4");
+            }
         }
 
-        this.#checkcollision(newNode);
+        this.#checkCollision(newNode);
     }
 
     deleteAll() {
@@ -513,7 +528,7 @@ export default class BST {
             }
         });
     }
-    #checkcollision(newNode) {
+    #checkCollision(newNode) {
         // check if the inserted node collides with any existing node
         let curNode = this.root;
 
@@ -521,6 +536,14 @@ export default class BST {
             let equals = curNode === newNode;
             if ((curNode.x === newNode.x) && (curNode.y === newNode.y) && !equals) {
                 break;
+            }
+            else if (curNode.y === newNode.y && !equals) {
+                if ((curNode.x + (radius * 2)) === newNode.x) {
+                    break;
+                }
+                else if ((newNode.x + (radius * 2)) === curNode.x) {
+                    break;
+                }
             }
             else if (curNode.x === newNode.x) {
                 let parentNode = this.#getParentNode(newNode);
@@ -556,7 +579,6 @@ export default class BST {
             let p1 = this.#getParentNode(curNode);
             let p2 = this.#getParentNode(newNode);
 
-            // move current node out of collision
             const doubleRadius = (radius * 2);
             if (p1.rightNode === curNode) {
                 curNode.x -= doubleRadius;

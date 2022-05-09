@@ -25,7 +25,7 @@ const performAlgorithm = () => {
     let value = algorithmValue.value.trim(" ");
 
     if (numberRegExp.exec(value) === null) {
-        errorMessage.textContent = "Please enter a number (1 - 999)";
+        errorMessage.textContent = "Please enter a number (0 - 999)";
         algorithmValue.value = "";
         algorithmValue.focus();
     }
@@ -41,7 +41,12 @@ const performAlgorithm = () => {
             bst.repaint();
 
             if (object === null) {
-                bst.insert(value);
+                if (bst.values.length <= 15) {
+                    bst.insert(value);
+                }
+                else {
+                    bst.displayText("Tree is full. Clear the Board");
+                }
             }
             else {
                 errorMessage.textContent = "No duplicates allowed";

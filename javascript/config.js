@@ -1,2 +1,2 @@
-export const radius = 20;
-export const originY = 30;
+export const radius = 25;
+export const originY = 35;
