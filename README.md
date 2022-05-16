@@ -2,7 +2,7 @@
 
 A binary search tree visualizer used to demonstrate some common algorithms.
 
-View it here: [bst-visualizer.site](https://bst-visualizer.site/)
+View it here: [bst-visualizer](https://heincoetzee.github.io/bst-visualizer/)
 
 ## The Algorithms
 
